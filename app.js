@@ -435,6 +435,7 @@
       todo.completed = check.checked;
       save();
       render();
+      focusTaskControl(todo.id, ".item__check");
     });
 
     del.addEventListener("click", function () {
@@ -467,8 +468,10 @@
     function commit() {
       if (editor.hidden) return;
       var next = editTitle.value.trim();
+      var removed = false;
       if (!next) {
         todos = todos.filter(function (t) { return t.id !== todo.id; });
+        removed = true;
       } else {
         todo.title = next.slice(0, MAX_TITLE);
         todo.due = normalizeDue(editDue.value);
@@ -476,6 +479,8 @@
       }
       save();
       render();
+      if (!removed) focusTaskControl(todo.id, ".item__edit-btn");
+      else input.focus();
     }
 
     function cancel() {
@@ -515,6 +520,19 @@
     editBtn.addEventListener("click", startEdit);
 
     return node;
+  }
+
+  function findItemNode(id) {
+    for (var i = 0; i < list.children.length; i += 1) {
+      if (list.children[i].dataset.id === id) return list.children[i];
+    }
+    return null;
+  }
+
+  function focusTaskControl(id, selector) {
+    var node = findItemNode(id);
+    var target = node ? node.querySelector(selector) : null;
+    (target || input).focus();
   }
 
   function render() {

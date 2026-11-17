@@ -7,7 +7,7 @@ A small, dependency-free todo app that runs entirely in the browser and stores t
 - Add, edit (edit button, double-click or <kbd>Enter</kbd> on a task), complete and delete tasks
 - Filters: All / Active / Completed, plus filtering by tag
 - Live counters and "Clear completed"
-- **Due dates**: optional due date on add and edit; each task shows a friendly date ("Today", "Tomorrow", "Mon, Nov 17")
+- **Due dates**: optional due date on add and edit; each task shows a friendly date ("Today", "Tomorrow", "Nov 17")
 - **Overdue alerts**: tasks past the end of their due day (local time) are highlighted, and a banner counts overdue tasks. The state refreshes after reload, when the tab regains focus, and automatically at midnight
 - **Tags**: built-in Work / Personal / Urgent tags plus custom tags, each with a high-contrast color that stays legible in dark and light themes; assign several tags per task and filter by tag
 - **JSON export / import**: export all tasks (with a version field and your custom tags) to a file; import with merge or replace, with schema validation and clear errors that leave existing data untouched
