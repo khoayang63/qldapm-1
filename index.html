@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo</title>
+  <meta name="description" content="A fast, offline-first todo list that keeps your tasks in your browser." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%85%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <div>
+        <h1 class="app__title">Todo</h1>
+        <p class="app__subtitle" id="summary">No tasks yet</p>
+      </div>
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Switch theme" title="Switch theme">
+        <span id="theme-icon" aria-hidden="true">🌙</span>
+      </button>
+    </header>
+
+    <form id="add-form" class="add" autocomplete="off">
+      <label class="sr-only" for="new-todo">New task</label>
+      <input
+        id="new-todo"
+        class="add__input"
+        name="title"
+        type="text"
+        placeholder="What needs to be done?"
+        maxlength="200"
+        required
+      />
+      <button class="add__btn" type="submit">Add</button>
+    </form>
+
+    <nav class="filters" role="tablist" aria-label="Filter tasks">
+      <button class="filters__btn is-active" type="button" role="tab" aria-selected="true" data-filter="all">All</button>
+      <button class="filters__btn" type="button" role="tab" aria-selected="false" data-filter="active">Active</button>
+      <button class="filters__btn" type="button" role="tab" aria-selected="false" data-filter="completed">Completed</button>
+    </nav>
+
+    <ul id="todo-list" class="list" aria-live="polite"></ul>
+
+    <p id="empty-state" class="empty" hidden>Nothing here. Add your first task above.</p>
+
+    <footer class="app__footer">
+      <span id="items-left" class="muted">0 items left</span>
+      <button id="clear-completed" class="link-btn" type="button" hidden>Clear completed</button>
+    </footer>
+  </main>
+
+  <template id="todo-template">
+    <li class="item">
+      <input class="item__check" type="checkbox" aria-label="Toggle task" />
+      <span class="item__title" tabindex="0" role="button" title="Double-click to edit"></span>
+      <input class="item__edit" type="text" maxlength="200" aria-label="Edit task" hidden />
+      <button class="icon-btn item__delete" type="button" aria-label="Delete task" title="Delete">✕</button>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
