@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Todo</title>
-  <meta name="description" content="A fast, offline-first todo list that keeps your tasks in your browser." />
+  <meta name="description" content="A fast, offline-first todo list with due dates, tags and JSON backup that keeps your tasks in your browser." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%85%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -21,17 +21,37 @@
     </header>
 
     <form id="add-form" class="add" autocomplete="off">
-      <label class="sr-only" for="new-todo">New task</label>
-      <input
-        id="new-todo"
-        class="add__input"
-        name="title"
-        type="text"
-        placeholder="What needs to be done?"
-        maxlength="200"
-        required
-      />
-      <button class="add__btn" type="submit">Add</button>
+      <div class="add__row">
+        <label class="sr-only" for="new-todo">New task</label>
+        <input
+          id="new-todo"
+          class="add__input"
+          name="title"
+          type="text"
+          placeholder="What needs to be done?"
+          maxlength="200"
+          required
+        />
+        <button class="add__btn" type="submit">Add</button>
+      </div>
+      <div class="add__options">
+        <label class="field field--date">
+          <span class="field__label">Due date</span>
+          <input id="new-due" class="input" type="date" />
+        </label>
+        <div class="add__tags">
+          <span class="field__label" id="new-tags-label">Tags</span>
+          <div id="new-tags" class="tag-picker" role="group" aria-labelledby="new-tags-label"></div>
+        </div>
+        <button id="new-tag-btn" class="btn btn--ghost btn--small add__new-tag" type="button" aria-expanded="false" aria-controls="new-tag-form">+ New tag</button>
+      </div>
+      <div id="new-tag-form" class="new-tag" hidden>
+        <label class="sr-only" for="new-tag-name">New tag name</label>
+        <input id="new-tag-name" class="input" type="text" maxlength="24" placeholder="Tag name" autocomplete="off" />
+        <button id="new-tag-save" class="btn btn--small" type="button">Create tag</button>
+        <button id="new-tag-cancel" class="btn btn--ghost btn--small" type="button">Cancel</button>
+        <p id="new-tag-message" class="field__error" role="status" hidden></p>
+      </div>
     </form>
 
     <nav class="filters" role="tablist" aria-label="Filter tasks">
@@ -39,6 +59,10 @@
       <button class="filters__btn" type="button" role="tab" aria-selected="false" data-filter="active">Active</button>
       <button class="filters__btn" type="button" role="tab" aria-selected="false" data-filter="completed">Completed</button>
     </nav>
+
+    <div id="tag-filters" class="tag-filters" role="group" aria-label="Filter by tag"></div>
+
+    <p id="overdue-banner" class="banner" role="status" hidden></p>
 
     <ul id="todo-list" class="list" aria-live="polite"></ul>
 
@@ -48,14 +72,55 @@
       <span id="items-left" class="muted">0 items left</span>
       <button id="clear-completed" class="link-btn" type="button" hidden>Clear completed</button>
     </footer>
+
+    <section class="data" aria-label="Backup and restore">
+      <div class="data__actions">
+        <button id="export-btn" class="btn btn--ghost btn--small" type="button">Export JSON</button>
+        <button id="import-btn" class="btn btn--ghost btn--small" type="button">Import JSON</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden />
+        <label class="field field--mode">
+          <span class="field__label">Import as</span>
+          <select id="import-mode" class="input input--select">
+            <option value="merge">Merge</option>
+            <option value="replace">Replace</option>
+          </select>
+        </label>
+      </div>
+      <p id="data-status" class="data__status" role="status" aria-live="polite" hidden></p>
+    </section>
   </main>
 
   <template id="todo-template">
     <li class="item">
-      <input class="item__check" type="checkbox" aria-label="Toggle task" />
-      <span class="item__title" tabindex="0" role="button" title="Double-click to edit"></span>
-      <input class="item__edit" type="text" maxlength="200" aria-label="Edit task" hidden />
-      <button class="icon-btn item__delete" type="button" aria-label="Delete task" title="Delete">✕</button>
+      <div class="item__row">
+        <input class="item__check" type="checkbox" aria-label="Toggle task" />
+        <div class="item__body">
+          <span class="item__title" tabindex="0" role="button" title="Double-click or press Enter to edit"></span>
+          <div class="item__meta" hidden>
+            <span class="item__due"></span>
+            <span class="item__tags"></span>
+          </div>
+        </div>
+        <button class="icon-btn item__edit-btn" type="button" aria-label="Edit task" title="Edit">✎</button>
+        <button class="icon-btn item__delete" type="button" aria-label="Delete task" title="Delete">✕</button>
+      </div>
+      <div class="item__editor" hidden>
+        <input class="item__edit-title" type="text" maxlength="200" aria-label="Task title" />
+        <div class="item__edit-fields">
+          <label class="field">
+            <span class="field__label">Due date</span>
+            <input class="input item__edit-due" type="date" />
+          </label>
+          <div class="editor__tags">
+            <span class="field__label">Tags</span>
+            <div class="tag-picker item__edit-tags" role="group" aria-label="Task tags"></div>
+          </div>
+        </div>
+        <div class="editor__actions">
+          <button class="btn btn--ghost btn--small item__cancel" type="button">Cancel</button>
+          <button class="btn btn--small item__save" type="button">Save</button>
+        </div>
+      </div>
     </li>
   </template>
 
